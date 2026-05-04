@@ -25,15 +25,19 @@ jobs:
           docker push alyyasser10/p9-app:$IMAGE_TAG
 
       - name: Update deploy repo with new image tag
-  run: |
-    IMAGE_TAG=${{ github.sha }}
-    git clone https://$DEPLOY_REPO_TOKEN@github.com/AliYasser2003/P9_Gitops-Platform-Deploy.git
-    cd P9_Gitops-Platform-Deploy
+        env:
+          DEPLOY_REPO_TOKEN: ${{ secrets.DEPLOY_REPO_TOKEN }}
+        run: |
+          IMAGE_TAG=${{ github.sha }}
 
-    # update the tag in dev values
-    sed -i "s/tag:.*/tag: $IMAGE_TAG/" environments/dev/values.yaml
+          git clone https://$DEPLOY_REPO_TOKEN@github.com/AliYasser2003/P9_Gitops-Platform-Deploy.git
+          cd P9_Gitops-Platform-Deploy
 
-    git config user.name "github-actions"
-    git config user.email "ci@github.com"
-    git commit -am "update image tag to $IMAGE_TAG" || echo "no changes"
-    git push
+          sed -i "s/tag:.*/tag: $IMAGE_TAG/" environments/dev/values.yaml
+
+          git config user.name "github-actions"
+          git config user.email "ci@github.com"
+
+          git add .
+          git commit -m "update image tag to $IMAGE_TAG" || echo "no changes"
+          git push
