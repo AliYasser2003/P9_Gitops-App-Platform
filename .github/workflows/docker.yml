@@ -20,5 +20,6 @@ jobs:
 
       - name: Build and Push
         run: |
-          docker build -t alyyasser10/p9-app:latest .
-          docker push alyyasser10/p9-app:latest
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t alyyasser10/p9-app:$IMAGE_TAG .
+          docker push alyyasser10/p9-app:$IMAGE_TAG
